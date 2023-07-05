@@ -1,25 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { userDto } from './dtos/user.dto';
-
-const prisma = new PrismaClient()
 
 @Injectable()
 export class UsersService {
-    userLogin(dto: userDto) {
-        return {
-            dto
-        }
-    }
+  constructor(private prisma: PrismaService) {}
+  
 
-    async userSignup(dto: userDto) {
-        try {
-            const newUser = await prisma.users.create({
-                data: dto
-            })
-            return newUser
-        } catch (error) {
-            throw new HttpException("User cannot be created",HttpStatus.BAD_REQUEST)            
-        }
+  async getAllUsers() {
+    try {
+      const user = await this.prisma.users.findMany({
+       include: {
+        todos: true
+       }
+      });
+      return user;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
+  }
 }
