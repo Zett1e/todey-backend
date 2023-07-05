@@ -15,10 +15,13 @@ model Users {
   name String 
   email String
   password String
+  todos Todos[]
 }
 
 model Todos {
   id Int @id @default(autoincrement())
   title String
   isDone Boolean @default(false)
+  author Users @relation(fields: [authorId],references: [id])
+  authorId Int 
 }
